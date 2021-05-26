@@ -11,6 +11,7 @@ library(dplyr)
 # Read data
 beer.dta <- read_dta(file = "beer.dta")
 
+
 ## Data Cleaning:
 # Rename some variables to be more intuitive
 beer.dta$regional <-  beer.dta$avail
