@@ -4,13 +4,21 @@
 # Kyle Davis
 #
 
-# Packages used:
-library(haven)
-library(dplyr)
+# PowerBI Steps:
+# Load Data from R Script
+#   - check working directory because by default it will not know from script.
 
-# Read data
+# Load packages in a far too fancy of a way, suppressing warnings helps PowerBI
+packages <- c("haven", "dplyr", "Hmisc", "corrplot")
+suppressWarnings( lapply(packages, require, character.only = TRUE) )
+rm(packages) # remove packages list
+
+## Read data - Make sure to set working directory full path
+
+# getwd() # This will help pull current working directory
+setwd("C:/Users/Shing/Videos/YouTube Working/R and Power BI/R for PowerBI")
 beer.dta <- read_dta(file = "beer.dta")
-
+beer.dta <- as.data.frame(beer.dta) # PBI works best with data.frame data
 
 ## Data Cleaning:
 # Rename some variables to be more intuitive
@@ -29,7 +37,25 @@ beer.dta[37,] <- list(3, "Keystone Light", 1.08, .08, 101, 0, 4.2, 1, 1, 1, 0, 1
 
 ## Set up additional data table for PowerBI:
 
+# Making a function to better sort data into columns rather than identity matrix
+flattenCorrMatrix <- function(cormat, pmat) { #Takes cor.matrix, p.matrix
+     ut <- upper.tri(cormat)                  #Upends it, then puts in df
+     data.frame(
+          row = rownames(cormat)[row(cormat)[ut]],
+          column = rownames(cormat)[col(cormat)[ut]],
+          cor  =(cormat)[ut],
+          p = pmat[ut]
+     )
+}
 
+hmisc_cor <- rcorr(as.matrix(beer.dta[,3:10]))
+
+# Let's make another dataset for these correlation values we can upload to PBI
+cor_data <- flattenCorrMatrix(hmisc_cor$r, hmisc_cor$P)
 
 
 ## Set up Graphs for PowerBI:
+corrplot(hmisc_cor$r, order="hclust", tl.col = "black", tl.pos = "d", type = "upper", method = "number",
+         p.mat = hmisc_cor$P, sig.level = 0.01, insig = "blank")
+# Remove environment object not used beyond this point.
+rm(hmisc_cor)
