@@ -1,9 +1,3 @@
-#
-# R file for cleaning data for PowerBI Dashboard
-# < https://www.linkedin.com/in/kyledavisln/ >
-# Kyle Davis
-#
-
 # PowerBI Notes:
 # Load Data from R Script
 #   - check working directory because by default it will not know from script.
@@ -25,9 +19,6 @@ suppressWarnings( lapply(packages, require, character.only = TRUE) )
 rm(packages) # remove packages list
 
 ## Read data - Make sure to set working directory full path
-
-# getwd() # This will help pull current working directory
-setwd("C:/Users/Shing/Videos/YouTube Working/R and Power BI/R for PowerBI")
 beer.dta <- read_dta(file = "beer.dta")
 beer.dta <- as.data.frame(beer.dta) # PBI works best with data.frame data
 
